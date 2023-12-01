@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source /functions.sh
+
+## processing arguments
+in_dir=$1 # folder where the EO product is staged-in
+band=$2 # asset key to crop
+bbox=$3 # bbox processing argument
+proj=$4 # EPSG code used to express bbox coordinates
+
+## Read the input STAC catalog
+# STAC catalog path
+catalog="${in_dir}/catalog.json"
+
+# get the item path
+item=$( get_items ${catalog} )
+
+# get the B02 asset href (local path)
+asset_href=$( get_asset ${item} ${band} )
+
+gdal_translate \
+      -projwin \
+      "$( echo $bbox | cut -d ',' -f 1)" \
+      "$( echo $bbox | cut -d ',' -f 4)" \
+      "$( echo $bbox | cut -d ',' -f 3)" \
+      "$( echo $bbox | cut -d ',' -f 2)" \
+      -projwin_srs \
+      ${proj} \
+      ${asset_href} \
+      ${band}_cropped.tif
+
+
+## result as STAC
+# get the properties from the input STAC item
+# as these are the same for the output STAC item
+datetime=$( get_item_property ${item} "datetime" )
+gsd=$( get_item_property ${item} "gsd" )
+
+# initialise a STAC item
+init_item "${datetime}" "${bbox}" "${gsd}" > result-item.json
+
+# add an asset
+add_asset result-item.json "${band}" "./cropped.tif" "image/tiff" "Cropped ${band} band" "data"
+
+# initialise the output catalog
+init_catalog > catalog.json
+
+# add the item
+add_item catalog.json result-item.json

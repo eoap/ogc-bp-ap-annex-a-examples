@@ -1,0 +1,6 @@
+product:
+  class: Directory
+  path: ../reference-data
+band: B02
+bbox: "136.522,-36.062,137.027,-35.693"
+proj: "EPSG:4326"
