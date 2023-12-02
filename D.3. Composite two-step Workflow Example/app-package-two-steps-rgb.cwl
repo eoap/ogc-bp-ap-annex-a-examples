@@ -95,7 +95,7 @@ $graph:
   id: composite-cl
   requirements:
     DockerRequirement:
-      dockerPull: composite:latest #ghcr.io/eoap/ogc-bp-ap-annex-a-examples/composite:latest
+      dockerPull: ghcr.io/eoap/ogc-bp-ap-annex-a-examples/composite:latest
     InlineJavascriptRequirement: {}
   baseCommand: composite
   arguments:
