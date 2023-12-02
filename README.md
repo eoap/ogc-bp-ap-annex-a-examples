@@ -18,7 +18,7 @@ The output of the data stage-in is a local STAC Catalog  with a STAC Item whose 
 
 Learn more about the Data Flow Management [here](https://docs.ogc.org/bp/20-089r1.html#toc38).
 
-This repository provides a simple Python script to stage a Sentinel-2 product from the `sentinel-s2-l2a-cogs` collection.
+This repository provides a simple Python script to stage a Sentinel-2 product from the Sentinel-2 Cloud-Optimized GeoTIFFs collection described here: [https://registry.opendata.aws/sentinel-2-l2a-cogs/](https://registry.opendata.aws/sentinel-2-l2a-cogs/).
 
 This Python script requires `stac-asset` and `pystac`, install these with:
 
