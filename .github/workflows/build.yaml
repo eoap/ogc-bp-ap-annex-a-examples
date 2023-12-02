@@ -23,7 +23,7 @@ jobs:
     - name: build & push image
       run: |
         IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
-        docker build water-bodies/command-line-tools/${{ matrix.step }} --file containers/Dockerfile.${{ matrix.step }} --tag $IMAGE_ID:latest
+        docker build containers --file containers/Dockerfile.${{ matrix.step }} --tag $IMAGE_ID:latest
         docker push $IMAGE_ID:latest
 
 
