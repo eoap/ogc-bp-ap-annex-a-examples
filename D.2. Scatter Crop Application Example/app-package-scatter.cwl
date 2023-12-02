@@ -1,53 +1,72 @@
-#!/usr/bin/env cwl-runner
-
+cwlVersion: v1.0
 $graph:
 - class: Workflow
-  label: Sentinel-2 band crop
-  doc: This application crops a Sentinel-2 band
+  label: Sentinel-2 product crop
+  doc: This application crops bands from a Sentinel-2 product
+  id: s2-cropper
+
+  requirements:
+  - class: ScatterFeatureRequirement
 
   inputs:
-    band:
-      label: Sentinel-2 band
-      doc: Sentinel-2 band to crop (e.g. B02)
-      type: string
-    bbox:
-      label: bounding box
-      doc: Area of interest expressed as a bounding bbox
-      type: string
     product:
-      label: Sentinel-2 inputs
-      doc: Sentinel-2 Level-1C or Level-2A input reference
       type: Directory
+      label: Sentinel-2 input
+      doc: Sentinel-2 Level-1C or Level-2A input reference
+    bands:
+      type: string[]
+      label: Sentinel-2 bands
+      doc: Sentinel-2 list of bands to crop
+    bbox:
+      type: string
+      label: bounding box
+      doc: Area of interest expressed as a bounding box
     proj:
+      type: string
       label: EPSG code
       doc: Projection EPSG code for the bounding box
-      type: string
-      default: EPSG:4326
+      default: "EPSG:4326"
 
   outputs:
     results:
-      type: Directory
       outputSource:
       - node_crop/cropped_tif
+      type: Directory[]
 
   steps:
+
     node_crop:
+
+      run: "#crop-cl"
+
       in:
-        band: band
+        product: product
+        band: bands
         bbox: bbox
         epsg: proj
-        product: product
-      run: '#crop-cl'
+
       out:
-      - cropped_tif
-  id: s2-cropper
+        - cropped_tif
+
+      scatter: band
+      scatterMethod: dotproduct
+
 - class: CommandLineTool
+
+  id: crop-cl
 
   requirements:
     DockerRequirement:
       dockerPull: ghcr.io/eoap/ogc-bp-ap-annex-a-examples/crop:latest
 
+  baseCommand: crop
+  arguments: []
+
   inputs:
+    product:
+      type: Directory
+      inputBinding:
+        position: 1
     band:
       type: string
       inputBinding:
@@ -60,23 +79,15 @@ $graph:
       type: string
       inputBinding:
         position: 4
-    product:
-      type: Directory
-      inputBinding:
-        position: 1
 
   outputs:
     cropped_tif:
-      type: Directory
       outputBinding:
         glob: .
+      type: Directory
 
-  baseCommand: crop
-  arguments: []
-  id: crop-cl
 $namespaces:
   s: https://schema.org/
-cwlVersion: v1.0
 s:softwareVersion: 1.0.0
 schemas:
 - http://schema.org/version/9.0/schemaorg-current-http.rdf

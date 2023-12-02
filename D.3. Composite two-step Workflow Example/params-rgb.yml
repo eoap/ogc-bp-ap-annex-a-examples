@@ -1,0 +1,8 @@
+product:
+  class: Directory
+  path: ../reference-data
+red: B04
+green: B03
+blue: B02
+bbox: "136.522,-36.062,137.027,-35.693"
+proj: "EPSG:4326"
