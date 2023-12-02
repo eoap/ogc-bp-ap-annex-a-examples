@@ -1,6 +1,6 @@
 # OGC Best Practice for Earth Observation Application Package Annex A examples
 
-This repository contains the examples provided in the Annex A of the OGC Best Practice for Earth Observation Application Package.
+This repository contains the examples provided in the Annex A of the [OGC Best Practice for Earth Observation Application Package](https://docs.ogc.org/bp/20-089r1.html).
 
 The Annex A is available at the URL [https://docs.ogc.org/bp/20-089r1.html#toc52](https://docs.ogc.org/bp/20-089r1.html#toc52)
 
