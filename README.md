@@ -2,9 +2,11 @@
 
 This repository contains the examples provided in the Annex A of the OGC Best Practice for Earth Observation Application Package.
 
+The Annex A is available at the URL [https://docs.ogc.org/bp/20-089r1.html#toc52](https://docs.ogc.org/bp/20-089r1.html#toc52)
+
 To run these examples you'll need:
 
-* a CWL runner - see [Installing a CWL runner](https://www.commonwl.org/user_guide/introduction/quick-start.html#installing-a-cwl-runner)
+* a CWL runner, follow the instructions provided here: [Installing a CWL runner](https://www.commonwl.org/user_guide/introduction/quick-start.html#installing-a-cwl-runner)
 * a container runtime such as `docker` or `podman`
 * a staged Sentinel-2 acquisition
 
@@ -13,6 +15,8 @@ To run these examples you'll need:
 Data stage-in is the process to retrieve the inputs and make these available for the processing. Processing inputs are provided as catalogue references and the Platform is responsible for translating those references into inputs available as files for the local processing.
 
 The output of the data stage-in is a local STAC Catalog  with a STAC Item whose Assets have an accessible href (either local or remote e.g. COG) as the input files manifest for the application.
+
+Learn more about the Data Flow Management [here](https://docs.ogc.org/bp/20-089r1.html#toc38).
 
 This repository provides a simple Python script to stage a Sentinel-2 product from the `sentinel-s2-l2a-cogs` collection.
 
