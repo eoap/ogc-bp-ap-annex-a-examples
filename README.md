@@ -64,6 +64,11 @@ reference-data/
 1 directory, 21 files
 ```
 
+## Containers
+
+The command line tools are containerized and the container images are available in this [Github organization container registry](https://github.com/orgs/eoap/packages?repo_name=ogc-bp-ap-annex-a-examples).
+
+
 ## D.1. Crop Application Example
 
 This example crops a band from a Sentinel-2 product.
