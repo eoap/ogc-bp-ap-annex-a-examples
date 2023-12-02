@@ -30,6 +30,7 @@ Now stage the Sentinel-2 product in a folder named `reference-data`:
 
 ```bash
 mkdir reference-data
+cd reference-data
 python ../stage.py https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A
 ```
 
