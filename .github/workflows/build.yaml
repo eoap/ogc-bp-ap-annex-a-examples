@@ -1,0 +1,29 @@
+# github action workflow to build the two container images and push them to the ghcr.io registry
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  container-build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        step: [crop, composite]
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: build & push image
+      run: |
+        IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
+        docker build water-bodies/command-line-tools/${{ matrix.step }} --file containers/Dockerfile.${{ matrix.step }} --tag $IMAGE_ID:latest
+        docker push $IMAGE_ID:latest
+
+

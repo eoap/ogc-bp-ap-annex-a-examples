@@ -1,0 +1,54 @@
+#!/bin/bash
+
+## processing arguments
+red_channel=$1 # tif file for composite red channel
+green_channel=$2 # tif file for composite green channel
+blue_channel=$3 # tif file for composite blue channel
+in_dir=$4 # input STAC to retrieve the metadata (folder where the EO product is staged-in)
+bbox=$5 # area of interest
+
+gdalbuildvrt \
+      -separate composite.vrt \
+      ${red_channel} \
+      ${green_channel} \
+      ${blue_channel}
+
+gdal_translate \
+      composite.vrt \
+      composite.tif
+
+gdal_translate \
+      -ot Byte \
+      composite.vrt \
+      composite-preview.tif
+
+rm -f composite.vrt
+
+## result as STAC
+source /functions.sh
+## Read the input STAC catalog
+# STAC catalog path
+catalog="${in_dir}/catalog.json"
+
+# get the item path
+item=$( get_items ${catalog} )
+
+# get the properties from the input STAC item
+# as these are the same for the output STAC item
+datetime=$( get_item_property ${item} "datetime" )
+gsd=$( get_item_property ${item} "gsd" )
+
+# initialise a STAC item
+init_item "${datetime}" "${bbox}" "${gsd}" > composite-item.json
+
+# add an asset
+add_asset composite-item.json "composite" "./composite.tif" "image/tiff" "RGB composite" "data"
+
+# add an asset
+add_asset composite-item.json "preview" "./composite-preview.tif" "image/tiff" "RGB composite preview" "preview"
+
+# initialise the output catalog
+init_catalog > catalog.json
+
+# add the item
+add_item catalog.json composite-item.json
