@@ -1,5 +1,4 @@
-# github action workflow to build the two container images and push them to the ghcr.io registry
-
+# Build pull requests; publish images only from main.
 name: Build
 
 on:
@@ -8,22 +7,36 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   container-build:
-
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     strategy:
+      fail-fast: false
       matrix:
         step: [crop, composite]
-
     steps:
-    - uses: actions/checkout@v2
-    - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: build & push image
-      run: |
-        IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
-        docker build containers --file containers/Dockerfile.${{ matrix.step }} --tag $IMAGE_ID:latest
-        docker push $IMAGE_ID:latest
-
-
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
+          docker build containers --file containers/Dockerfile.${{ matrix.step }} --tag "$IMAGE_ID:latest"
+      - name: Check container tools
+        run: |
+          IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
+          docker run --rm "$IMAGE_ID:latest" bash -ec 'gdal_translate --version; gdalbuildvrt --version; jq --version; bash -n /usr/bin/${{ matrix.step }} /functions.sh'
+      - name: Log in to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GH_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE_ID=ghcr.io/eoap/ogc-bp-ap-annex-a-examples/${{ matrix.step }}
+          docker push "$IMAGE_ID:latest"

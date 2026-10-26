@@ -14,8 +14,8 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
+  - package-ecosystem: "docker"
+    directory: "/containers"
     schedule:
       interval: "daily"
       time: "06:00"
